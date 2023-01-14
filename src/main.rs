@@ -57,10 +57,10 @@ fn main() {
         Some(ref c) => c
     };
     
-    /*
-    let path = dt::to_path(stdout);
+
+    let path = dt::to_path(&stdout);
     println!("stdout-path={}", path);
-    */
+
 
     let compatible_prop = devt.get_prop_by_name(&stdout, "compatible").unwrap();
     let mut compatible_strings = compatible_prop.iter_str();
