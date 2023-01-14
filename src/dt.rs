@@ -89,19 +89,17 @@ pub fn read_two_items(prop: DevTreeIndexProp, acells: u32, scells: u32) -> Vec<R
     return result;
 }
 
-pub fn to_path(node: DevTreeIndexNode) -> String {
-    let mut path: String = String::from("");
-    let mut current = node;
-    path += current.name().unwrap();
-    loop {
-        let parent = current.parent();
-        match parent {
-            None =>  break,
-            Some(ref n) => path = String::from((*n).name().unwrap()) + "/" + &path
-        }
-        current = parent.unwrap();
+pub fn to_path<'a, 'i, 'dt>(node: &DevTreeIndexNode) -> String {
+
+    let pp = node.parent();
+    let parent  = pp.as_ref();
+    if let Some(p) = parent {
+        let prefix = to_path(p);
+        return prefix + "/" + &node.name().unwrap();
+    } 
+    else {
+        return String::from("");
     }
-    return path;
 }
 
 /* the items is assumed to be two element: <name to search> and <name to search@>
@@ -112,7 +110,7 @@ fn matches_name(node: DevTreeIndexNode, items: &Vec<&str>) -> bool {
 }
 
 fn matches_path(node: DevTreeIndexNode, items: &Vec<&str>) -> bool {
-    let binding = to_path(node);
+    let binding = to_path(&node);
     let path = binding.as_str();
     return path.eq(items[0]) || path.starts_with(items[1]);
 }
