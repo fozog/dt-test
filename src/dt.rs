@@ -89,17 +89,14 @@ pub fn read_two_items(prop: DevTreeIndexProp, acells: u32, scells: u32) -> Vec<R
     return result;
 }
 
-pub fn to_path<'a, 'i, 'dt>(node: &DevTreeIndexNode) -> String {
-
-    let pp = node.parent();
-    let parent  = pp.as_ref();
-    if let Some(p) = parent {
-        let prefix = to_path(p);
-        return prefix + "/" + &node.name().unwrap();
-    } 
-    else {
-        return String::from("");
+pub fn to_path(node: &DevTreeIndexNode) -> String {
+    let mut result = String::from(node.name().unwrap());
+    let mut current: DevTreeIndexNode = node.clone();
+    while let Some(parent) = current.parent() {
+        result = String::from(parent.name().unwrap()) + "/" + result.as_str();
+        current = parent;
     }
+    return result;
 }
 
 /* the items is assumed to be two element: <name to search> and <name to search@>
